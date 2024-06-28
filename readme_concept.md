@@ -17,7 +17,7 @@ Requsts from the VCs:
 
 The product architecture is built on Domain-Driven Design (DDD) principles, ensuring a clear separation of concerns and a scalable, maintainable codebase. By decomposing our product goals into logical modules, we've created a flexible and extensible system that can adapt to evolving business requirements.
 
-This document will walk you through our modular architecture, detailing the design patterns and inter-module interactions that form the backbone of our innovative solution.
+This document will walk you through our modular architecture, detailing the design patterns and inter-module interactions that form the backbone of our product.
 
 ## Domain Layer
 
@@ -27,17 +27,17 @@ The core of our system is the Atlas module, a OOP-heavy model built on  DDD conc
 - Value Objects: Immutable objects representing descriptive aspects of the domain, such as unit management, chemical compounds, and reaction sets.
 - Entities: Objects with distinct identities that run through time and different states, such as equipment and streams.
 - Collections: Specialized containers for managing groups of related objects, including parameters and properties.
-- Aggregate Roots: Clusters of domain objects treated as a single unit, with plants serving as our primary aggregate.
+- Aggregate Roots: Graph-based data structure of equipments and material streams, treated as a single unit, with plants serving as our primary aggregate.
+- Policies: functions objects that define the rules and constraints for various equipment configurations based on modes of compute.
 
 Where possible, each object is built on available industry schemas. For example, our compound library currently implements the CAS (Chemical Abstracts Service) schema, providing a standardized and widely recognized system for chemical substance identification.
 
 Atlas utilizes a graph-based data structure, offering several key advantages:
-- Technology agnosticism, allowing for flexible integration with various tech stacks.
 - Intuitive modeling of complex domain problems.
 - Efficient traversal and manipulation of interconnected data.
 - Scalability of relationships. For example,  we utilize a straightforward graph-of-graphs approach to model facility and portfolio-level interactions for multi-plant contracts. 
 
-We've invested significant resources in developing a comprehensive class hierarchy for equipment and stream types. This approach enables:
+We've invested significant resources in developing a comprehensive class hierarchy for the entities like equipments and streams. This approach enables:
 - High modularity and reusability across diverse implementations.
 - Easy extension to accommodate new equipment or stream types.
 - Consistent interface for interacting with different components.
@@ -47,11 +47,15 @@ We observe that the adoption of a domain-specific abstraction model has accelera
 ### Process Simulators & AI Models
 (qyote on modelling)
 
-Our domain model forms the backbone of our physics-based and AI-driven modeling modules. By leveraging a rich, semantically consistent core representation, we've enabled seamless integration between process simulations and AI models. This approach has resulted in a significant reduction in development time and the ability to confidently ensemble multiple models, increasing value for users. 
+Our domain model forms the backbone of our physics-based and AI-driven modeling modules. 
 
-Matrix is a integration module implementing a ports-and-adapters pattern to interface with external process simulators like gProms, AspenPlus, and HYSYS. This design ensures loose coupling between our core system and external simulators and standardized internal API for interacting with diverse simulation tools.
+By leveraging a rich, semantically consistent core representation, we've enabled seamless integration between process simulations and AI models. 
 
-Daedalus is our abstraction layer with AI frameworks.W e built custom wrappers and abstract classes around cutting-edge frameworks like TorchRL, PyTorch, and LightningAI. This abstraction layer insulates our core functionality from the rapid changes in the AI landscape. As new AI technologies emerge or current ones evolve, we are able to swap out or upgrade the underlying libraries without disrupting the existing codebase.
+This approach has resulted in a significant reduction in development time and the ability to confidently ensemble multiple models, increasing value for users. 
+
+Here are some detail on the modules themselves: 
+- Matrix is a integration module implementing a ports-and-adapters pattern to interface with external process simulators like gProms, AspenPlus, and HYSYS. This design ensures loose coupling between our core system and external simulators and standardized internal API for interacting with diverse simulation tools.
+- Daedalus is our abstraction layer with AI frameworks. We built custom wrappers and abstract classes around cutting-edge frameworks like TorchRL, PyTorch, and LightningAI. This abstraction layer insulates our core functionality from the rapid changes in the AI landscape. As new AI technologies emerge or current ones evolve, we are able to swap out or upgrade the underlying libraries without disrupting the existing codebase.
 
 Both modules are intentionally built to share similar interfaces, a design decision to facilitate seamless integration with our optimization module. This architectural choice enables a unified approach to physics-based and AI-driven modeling.
 
@@ -59,9 +63,9 @@ We envision this "hot-swappable, model-interoperability" to have compounding ben
   
 ### Parameter Optimization & Model Management (Metis)
 
-The Metis module serves as our optimization engine, combining hyperparameter tuning, experiment tracking, and model management into a unified abstraction layer. 
+The Metis module is our optimization engine, combining hyperparameter tuning, experiment tracking, and model management into a unified abstraction layer. 
 
-By consolidating essential MLOps functions into a single abstraction, Metis not only reduces time-to-value for parameter optimization but also ensures consistency, reproducibility, and compliance, which are critical factors for enterprise adoption.
+By consolidating essential MLOps functions into a single abstraction, Metis not only reduces time-to-value for parameter optimization of models but also ensures consistency, reproducibility, and compliance, which are critical factors for enterprise adoption.
 
 Metis is built on our core domain model and uses Dependency Injection to integrate with Matrix and Daedelus modules via a shared interface. This design decision has simplified engineering and allowed our engineers to focus on model innovation rather than infrastructure management. 
 
@@ -85,10 +89,69 @@ The breadth of this module means that we use a host of technologies such as scik
 
 Unlike the previous modules, athena is decoupled from our core domain model.  The decoupling of Athena from our core domain model offers some key advantages:
 
-Performance: As a stateless module, Athena leverages functional programming paradigms and vector operations, enabling high-throughput data processing without the overhead of object-oriented structures. This design choice facilitates efficient scaling for big data workloads, critical for real-time analytics in industrial settings.
+- Performance: As a stateless module, Athena leverages functional programming paradigms and vector operations, enabling high-throughput data processing without the overhead of object-oriented structures. This design choice facilitates efficient scaling for big data workloads, critical for real-time analytics in industrial settings.
+- Developer Efficiency: The loose coupling enables independent evolution of analytics capabilities, allowing data scientists to develop and deploy new value-added model insights without navigating complex domain-specific implementations. This separation of concerns has accelerated our development cycles, reduced time-to-market for new analytics features and significantly eased onboarding for new team members.
 
-Developer Efficiency: The loose coupling enables independent evolution of analytics capabilities, allowing data scientists to develop and deploy new value-added model insights without navigating complex domain-specific implementations. This separation of concerns has accelerated our development cycles, reduced time-to-market for new analytics features and significantly eased onboarding for new team members.
 
+## Data Manager & Serivice Layer (Capricorn)
+
+Our data manager, Capricorn, is designed with scalability and future adaptability in mind. It currently comprises three core components: a persistence layer, an anti-corruption layer and a data orchestration service. We've architected the system to allow for seamless integration of a message-driven architecture in future iterations.
+
+Our persistence layer implements the Repository pattern with SQLAlchemy ORM and PostgreSQL, enhanced by the Unit of Work pattern for managing transactions. This combination ensures data integrity and consistency within our database operations. It has enabled us to achieve high data integrity at scale.
+
+For data orchestration, we implemented a self-hosted `Prefect` server, which provides a powerful and flexible platform for building, scheduling, and monitoring complex data pipelines. . This provides us with declarative, version-controlled data pipelines that efficiently handle high-volume sensor data ingestion and processing. Our pipelines are designed to respond to changing conditions on the factory floor, providing a reactive system even without a full message-driven architecture.
+
+In its current implementation, Capricorn utilizes `FastAPI`, a high-performance asynchronous framework, to handle requests from both frontend applications and backend systems through a RESTful API. FastAPI's async capabilities allow us to efficiently manage multiple concurrent connections, crucial for real-time responsiveness in industrial settings. These requests trigger appropriate handlers in the persistence layer or data orchestration pipelines. As data is processed asynchronously, the system updates relevant components, ensuring swift responsiveness to industrial events even under high load.
+
+Finally, the persistence layer implements a basic event system using RabbitMQ in a lightweight configuration, working in conjunction with our Unit of Work pattern. The UoW manages transactional consistency within database operations, while RabbitMQ is used for publishing domain events after successful transactions. This approach enables loose coupling between modules and facilitates eventual consistency across the system. This provides a balance between immediate data integrity and system-wide responsiveness, which we have prioritized for our industrial setting where both accuracy and real-time updates are important.
+
+While our current use of RabbitMQ is streamlined for basic event publishing and subscribing, this architecture sets the stage for future enhancements. The decoupled nature of our components and the existing event system provide a solid foundation for transitioning to a full message-driven architecture as our needs grow, without requiring a complete overhaul. This forward-thinking design allows us to scale our use of RabbitMQ's features gradually, meeting increasing demands while maintaining system stability and performance.
+
+We see the evolution of the system happening in the following manner, in cadence with product growth:
+
+- Expanding Event Types: We'll gradually increase the variety of events published to RabbitMQ. This expansion will encompass a wider range of domain events, system health metrics, and detailed user activity logs, providing a more comprehensive view of system operations.
+- Enhanced Event Consumers: Building upon our existing consumers, we'll develop more sophisticated event handlers. These will power advanced features such as predictive maintenance alerts, real-time production optimization dashboards, and complex event processing for anomaly detection.
+- Asynchronous Operations at Scale: We'll migrate more of our long-running processes to asynchronous operations using RabbitMQ. This will significantly improve system responsiveness and allow for better resource allocation, particularly for computationally intensive tasks like large-scale data analysis or machine learning model training.
+- Microservices Evolution: As Capricorn grows, we'll leverage our existing RabbitMQ infrastructure to facilitate communication in a more distributed architecture. This will enable us to gradually decompose Capricorn into smaller, independently deployable microservices, improving scalability and maintainability.
+
+This phased evolution allows us to build upon our existing foundation, gradually expanding its capabilities while maintaining the stability and performance of our current system. It positions us to meet future scalability and flexibility needs while leveraging the investments we've already made in our architecture.
+
+## Example:
+
+Scenario: Reactor Temperature Change Simulation
+
+1. Operator Action: Operator initiates an if/then simulation to analyze the impact of changing a reactor's temperature from 80°C to 85°C using Atlas (Digital Twin module
+2. System Response: 
+    a. FastAPI receives and routes the simulation request 
+    b. Unit of Work (UoW) manages database transaction: Stores simulation parameters and initial state, Ensures atomic commit of the simulation setup 
+    c. RabbitMQ publishes a "SimulationInitiated" event
+3. Event Consumers React (via Prefect orchestration):
+    a. Atlas (Digital Twin): Creates a virtual copy of the reactor for simulation, Runs the temperature change scenario
+    b. Matrix (AI/ML module):Analyzes historical data to predict outcomes & provides AI-driven insights on potential impacts
+    c. Metis (Optimization module): 
+        - Calculates optimal control parameters for the new temperature, suggests efficiency improvements 
+        - Logs and versions all simulation data for future reference and analysis
+4. Asynchronous Processing: 
+    a. Atlas runs the complex reactor simulation models in the background
+    b. Athena performs vectorized computations on historical data and current simulation results
+    c. Metis iteratively optimizes control parameters based on simulation outcomes. MLFlow logs and registers the experiments and models. 
+    d. Prefect manages the workflow, ensuring proper sequencing and data flow between modules
+
+
+Final Outcome: Operator receives a comprehensive report including:
+- Simulated reactor behavior at the new temperature
+- AI-driven predictions of process outcomes
+- Optimized control parameters for the temperature change
+- Visual representations of the simulated process
+- Historical context and data-driven insights
+
+This scenario demonstrates how Capricorn's modular architecture, event-driven design, and asynchronous processing capabilities come together to provide a powerful, responsive system for complex industrial simulations and decision support.
+
+## Tech Stack
+
+Here is a summary of the technologies used 
+
+----
 
 
 # System Architecture V1

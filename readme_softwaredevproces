@@ -1,0 +1,119 @@
+The following are snippets from our internal company docs. Its intended to give a sense of our internal engineering culture and tone of communication. 
+
+**Table of Contents**
+
+---
+
+# Developer Rhythms
+
+![A diagram of our rhythms](https://prod-files-secure.s3.us-west-2.amazonaws.com/5ea6fd3e-bc94-46ad-9389-f480b95fefc1/d73f4c94-eca4-4173-a91f-70252e0a479a/Untitled.png)
+
+A diagram of our rhythms
+
+Our work rhythms are designed to support both collaboration and individual deep work.
+
+## **Sprint Cadence**
+
+- Our sprints are structured into two-week cycles.
+- We label sprints by the quarter, with 6-7 sprints within each quarter. For example, sprint 4.3 refers to the third sprint of the fourth quarter. Can you think of what sprint 2.1 would signify?
+
+## **Sprint Events**
+
+- **Sprint Planning & Launch:** Takes place on the first Monday of the sprint. Planning means we review the active epics and fill the tasks to be done.
+- **Daily Standup:** We hold a brief, 10-minute meeting every day at noon SGT to update each other on progress and immediate plans. Engineers also do short huddles after to resolve any blockers.
+
+---
+
+# Developer Collaboration
+
+## Notion Sprints for Planning
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/5ea6fd3e-bc94-46ad-9389-f480b95fefc1/d35e4882-e86e-4e44-abc8-ab4eb77782c1/Untitled.png)
+
+Notion serves as our central platform for planning and executing on projects. We organize our work using a structured hierarchy of epics and tasks, which simplifies tracking and improves our project management efficiency. In general, we adhere to the kanban ethos of `Stop Starting, Start Finishing` !
+
+Here's how we categorize and handle our activities in Notion:
+
+- **Epics (Also Known as Projects):**
+    - Epics are broad, overarching projects or initiatives that encompass multiple smaller tasks. They are collaborative efforts potentially spanning several sprints.
+    - We organize epics by teams. This reduces collaborative overhead as the same group of people can collaborate on the same bucket of tasks.
+- **Tasks (Atomic Actions):**
+    - Each task is designed to be completed by a single person. This clarity in responsibility supports focused work and accountability.
+    - Tasks should be manageable within the duration of a single sprint. If a task is too large, they are broken down into smaller units.
+- 
+
+## Github Repo for Code Collaboration
+
+![Our Repo Strategy](https://prod-files-secure.s3.us-west-2.amazonaws.com/5ea6fd3e-bc94-46ad-9389-f480b95fefc1/73a9183c-86b7-4f49-8f1a-3a7187ac4224/Untitled.png)
+
+Our Repo Strategy
+
+Our GitHub management strategy is simple. We use a defined repository and branching structure along with semi-strict pull request protocols to maintain code quality and readiness. For client projects, we clone. 
+
+- **Core Repository**
+    - The **`main`** branch represents the most stable and optimal version of our code. Maintaining its integrity is crucial because it serves as the production or release benchmark, ensuring all team members and systems operate with the most reliable and tested code.
+- **Client Projects**
+    - Each client project is managed in a `forked repository`. We also maintain `main` as the stable, deploy version of the code.
+    - This segregation allows us to customize solutions without risking the stability of our core code and makes client-specific adaptations easier to handle and track.
+- **Personal Branches**
+    - Team members create personal branches for tasks, prefixed with their name (e.g., **`SG/optimizer_improvements`**). This is to promote ownership and makes it easier to track individual contributions and changes.
+- **Pull Requests (PRs)**
+    - PRs are essential for integrating completed work back into the main branch.
+    - PRs use Github Actions to run automated unit tests before passing. If it fails
+    - In the future, the introduction of Continuous Integration (CI) systems will automate some checks, helping to streamline the review process.
+    
+    ## Github Issues for Technical Debt Backlogs
+    
+    - **Bugs and Technical Debt**
+        - We distinguish **tasks** (planned work items aimed at adding new features or enhancements) from **debt** (issues that denote something is broken or not performing as expected).
+        - Managing **debt** in GitHub Issues helps prioritize fixes and track ongoing maintenance needs.
+        - Managing **tasks** in notion helps as focus on projects to move the needle.
+    - **Debt Triage**
+        - At the launch of each quarter, we triage and prioritze our debt into priority (1,2,3) and size (S,M,L). This is collaborative exercise involving all the engineers. We find it to be a useful ritual to align on code expectations and understand the development of our codebase.
+        - For large, severe issues, we migrate it over to Notion Projects so it can be managed in a team sprint.
+    - **Payback Debt**
+        - From sprint to sprint, we rotate a role called “bug fixer”. The nominated person dedicates 20% of his time fixing Github Issues. By design, this means engineers are working on other people’s codebase to do small fixes. We belive this is a worthy time investment to elevate the quality of code.
+    - 
+    - **Github Projects**
+        - To triage and prioritize technical debt, we use GitHub Projects. It is setup with a simple Kanban format.
+        - To keep things simple and use 1 project for all repos.
+        - here’s a configured project: https://github.com/orgs/AlephTechAi/projects/2
+        - (Note: Automation for adding a task to a GH project is limited to 1 repo at the moment. This is due to our subscriber tier.)
+        
+
+# Developer Operations
+
+## Containerized Developer Environments
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/5ea6fd3e-bc94-46ad-9389-f480b95fefc1/be69bd26-04c5-4828-91fb-29ce5e0e267f/Untitled.png)
+
+`Sonic` is **our tool to simplify python developer environments.** It combines libraries for ML/DL, WebDev and Process Simulators into a containerized environment that is run using `VSCode DevContainers`.
+
+At the docker image level, we use global installs for **python version management** (`pyenv`) and **python package management** (`poetry`). The image also includes installs for **chemical plant simulators** (e.g. DWSim) and **.net packages** (Mono). 
+
+This enables engineers to take the image and build their own project environments with minimal upfront cost. 
+
+## Code Hygiene
+
+At a **project level**, we use **shared project-level configs for code hygiene**
+
+- `.pylintrc`: specifies the warning levels. Currently init focuses on docstrings and basic typing so it nudges on basic practices without getting into the way of developer productivity.
+- `mypy`: we enforce static-type checking.
+- `black` for standardize code formatting
+
+## Tests
+
+![Untitled](https://prod-files-secure.s3.us-west-2.amazonaws.com/5ea6fd3e-bc94-46ad-9389-f480b95fefc1/0a97223f-511d-47da-8b45-3e0207003474/Untitled.png)
+
+We have defined our own schema for `unit`, `integration`, `e2e` and `performance` tests. 
+
+These are used as a baseline guide developer efforts: during the specification of epics, test stubs and mock apis are written as guidelines to communicate scope and design. 
+
+All of this is documented and filed within Notion for future discoverability. 
+
+## CI/CD
+
+All PRs are picked up by Github Actions for unit tests. 
+
+## INcid
+For infrastructure, our
