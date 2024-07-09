@@ -1,0 +1,63 @@
+name: prefect_dev
+
+services:
+
+  prefect:
+    container_name: prefect_dev-prefect
+    build:
+      context: ./prefect
+      dockerfile: prefect_server.Dockerfile
+    ports:
+      - "4200:4200"
+    depends_on:
+      - postgres
+    environment:
+      - PREFECT_SERVER_API_HOST=0.0.0.0
+      - PREFECT_SERVER_API_PORT=4200
+      - PREFECT_SERVER_DATABASE_URL=postgresql+asyncpg://prefect:prefectpassword@postgres:5432/prefect
+      - PREFECT_API_URL=http://0.0.0.0:4200/api
+      - PREFECT_API_DATABASE_ECHO=True
+      - PREFECT_LOGGING_LEVEL=INFO
+    networks:
+      - prefect-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+
+  caddy:
+    container_name: prefect_dev-caddy
+    build:
+      context: ./caddy
+      dockerfile: caddy_dev.Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./caddy/Caddyfile.dev:/etc/caddy/Caddyfile
+    depends_on:
+      - prefect
+    networks:
+      - prefect-network
+
+  postgres:
+    container_name: prefect_dev-postgres
+    image: postgres:13
+    environment:
+      POSTGRES_DB: prefect
+      POSTGRES_USER: prefect
+      POSTGRES_PASSWORD: prefectpassword
+    expose:
+      - "5432"
+    networks:
+      - prefect-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+networks:
+  prefect-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
