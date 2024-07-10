@@ -24,5 +24,8 @@ postgre-logs:
 caddy-logs:
 	docker compose -f docker-compose.dev_server.yml logs -f caddy > logs_caddy.txt &
 
+caddy-logs-stream:
+	docker compose -f docker-compose.dev_server.yml logs -f caddy
+
 prefect-shell:
 	docker compose -f docker-compose.dev_server.yml exec prefect-server /bin/bash
