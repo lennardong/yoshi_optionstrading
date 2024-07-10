@@ -1,5 +1,6 @@
-from prefect import flow, task
 from datetime import datetime
+
+from prefect import flow, task
 
 
 @task

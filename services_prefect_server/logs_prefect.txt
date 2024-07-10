@@ -1,12 +1,12 @@
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | #########################
-[2Kprefect_server_dev  | WAITING FOR PREFECT SERVER TO BE READY
 [2Kprefect_server_dev  | 
+[2Kprefect_server_dev  | WAITING FOR PREFECT SERVER TO BE READY
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | CONFIGURED ENV VARS
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | HOSTNAME=cdb472536db6
+[2Kprefect_server_dev  | HOSTNAME=10e06f00b4dd
 [2Kprefect_server_dev  | PYTHON_VERSION=3.8.19
 [2Kprefect_server_dev  | PREFECT_FLOWS_URL=http://0.0.0.0:4200/flows
 [2Kprefect_server_dev  | PWD=/app
@@ -28,17 +28,13 @@
 [2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | SETTING UP PREFECT CONFIGS
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 10:23:56.588 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 10:23:56.588 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 10:23:57.384 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | 14:58:14.042 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:14.042 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:14.841 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
 [2Kprefect_server_dev  | Set 'PREFECT_API_DATABASE_CONNECTION_URL' to 
 [2Kprefect_server_dev  | 'postgresql+asyncpg://prefect:prefectpassword@postgres:5432/prefect'.
 [2Kprefect_server_dev  | Updated profile 'default'.
-[2Kprefect_server_dev  | 10:23:58.590 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | Set 'PREFECT_API_URL' to 'http://0.0.0.0:4200/api'.
-[2Kprefect_server_dev  | PREFECT_API_URL is also set by an environment variable which will override your 
-[2Kprefect_server_dev  | config value. Run `unset PREFECT_API_URL` to clear it.
-[2Kprefect_server_dev  | Updated profile 'default'.
+[2Kprefect_server_dev  | 14:58:16.064 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | Traceback (most recent call last):
 [2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
 [2Kprefect_server_dev  |     yield
@@ -107,6 +103,7 @@
 [2Kprefect_server_dev  |     response = await self._send_single_request(request)
 [2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1763, in _send_single_request
 [2Kprefect_server_dev  |     response = await transport.handle_async_request(request)
+[2Kprefect_server_dev  | An exception occurred.
 [2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
 [2Kprefect_server_dev  |     resp = await self._pool.handle_async_request(req)
 [2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/contextlib.py", line 131, in __exit__
@@ -114,14 +111,17 @@
 [2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
 [2Kprefect_server_dev  |     raise mapped_exc(message) from exc
 [2Kprefect_server_dev  | httpx.ConnectError: All connection attempts failed
-[2Kprefect_server_dev  | An exception occurred.
+[2Kprefect_server_dev  | Set 'PREFECT_API_URL' to 'http://0.0.0.0:4200/api'.
+[2Kprefect_server_dev  | PREFECT_API_URL is also set by an environment variable which will override your 
+[2Kprefect_server_dev  | config value. Run `unset PREFECT_API_URL` to clear it.
+[2Kprefect_server_dev  | Updated profile 'default'.
 [2Kprefect_server_dev  | Waiting for Prefect server... (attempt: 1)
-[2Kprefect_server_dev  | 10:24:00.079 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:17.597 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | Set 'PREFECT_LOGGING_LEVEL' to 'DEBUG'.
 [2Kprefect_server_dev  | PREFECT_LOGGING_LEVEL is also set by an environment variable which will override
 [2Kprefect_server_dev  | your config value. Run `unset PREFECT_LOGGING_LEVEL` to clear it.
 [2Kprefect_server_dev  | Updated profile 'default'.
-[2Kprefect_server_dev  | 10:24:01.530 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:19.081 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | PREFECT_PROFILE='default'
 [2Kprefect_server_dev  | PREFECT_API_DATABASE_CONNECTION_URL='********' (from profile)
 [2Kprefect_server_dev  | PREFECT_API_URL='http://0.0.0.0:4200/api' (from env)
@@ -132,7 +132,7 @@
 [2Kprefect_server_dev  | RUNNING PREFECT SERVER
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | Skipping virtualenv creation, as specified in config file.
-[2Kprefect_server_dev  | 10:24:03.208 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:20.780 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  |  ___ ___ ___ ___ ___ ___ _____ 
 [2Kprefect_server_dev  | | _ \ _ \ __| __| __/ __|_   _| 
@@ -149,13 +149,14 @@
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 10:24:04.511 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 10:24:10.132 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 10:24:10.447 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | 14:58:22.070 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:27.600 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:27.892 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
 [2Kprefect_server_dev  |                                    Work Pools                                   
 [2Kprefect_server_dev  | ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┓
 [2Kprefect_server_dev  | ┃ Name              ┃ Type ┃                               ID ┃ Concurrency L… ┃
 [2Kprefect_server_dev  | ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━┩
+[2Kprefect_server_dev  | │ default           │ pro… │ d89f87c3-4f43-4689-8452-7633c5c… │ None           │
 [2Kprefect_server_dev  | │ workpool_localpr… │ pro… │ 46516718-9777-4aca-b2a1-bced16b… │ 10             │
 [2Kprefect_server_dev  | └───────────────────┴──────┴──────────────────────────────────┴────────────────┘
 [2Kprefect_server_dev  |                            (**) denotes a paused pool                           
@@ -163,8 +164,9 @@
 [2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | CREATING DEFAULT WORK POOL
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 10:24:11.625 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 10:24:11.918 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | 14:58:29.069 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 14:58:29.361 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
 [2Kprefect_server_dev  | Work pool named 'workpool_localprocess' already exists. Please try creating your
 [2Kprefect_server_dev  | work pool again with a different name.
-prefect_server_dev exited with code 0
+[2Kprefect_server_dev  | 15:08:27.824 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry:
+[2Kprefect_server_dev  | Shutting down telemetry service...

@@ -133,6 +133,114 @@ Network Architecture
 
 
 
+# Prefect Basics: Understanding Flows, Deployments, Work Pools, and Work Queues
+
+## Introduction
+
+Prefect is a modern workflow management system designed to handle complex data pipelines and task orchestration. It provides a robust set of tools for building, scheduling, and monitoring workflows. This document will explain the key concepts of Prefect: Flows, Deployments, Work Pools, and Work Queues.
+
+## Flows
+
+A Flow is the core building block of Prefect workflows. It represents a collection of tasks that are executed in a specific order to achieve a desired outcome.
+
+Key characteristics of Flows:
+- Flows are defined using Python code
+- They can contain multiple tasks with dependencies
+- Flows handle the overall logic and structure of a workflow
+
+Example of a simple Flow:
+
+```python
+from prefect import flow, task
+
+@task
+def say_hello(name):
+    print(f"Hello, {name}!")
+
+@flow
+def greeting_flow(name):
+    say_hello(name)
+
+greeting_flow("Alice")
+```
+
+## Deployments
+
+A Deployment is a way to package and configure a Flow for execution. It allows you to specify how, when, and where a Flow should run.
+
+Key aspects of Deployments:
+- They associate a Flow with specific runtime configurations
+- Deployments can include schedules, parameters, and infrastructure details
+- They enable version control and reproducibility of Flow runs
+
+Example of creating a Deployment:
+
+```python
+from prefect.deployments import Deployment
+from prefect.server.schemas.schedules import CronSchedule
+
+deployment = Deployment.build_from_flow(
+    flow=greeting_flow,
+    name="scheduled-greeting",
+    schedule=CronSchedule(cron="0 0 * * *"),
+    parameters={"name": "Bob"}
+)
+deployment.apply()
+```
+
+## Work Pools
+
+Work Pools are a way to organize and manage the infrastructure where your Flows run. They act as a layer of abstraction between your Flows and the underlying compute resources.
+
+Key features of Work Pools:
+- They define the execution environment for Flows
+- Work Pools can represent different types of infrastructure (e.g., Kubernetes clusters, AWS ECS)
+- They allow for efficient resource allocation and management
+
+## Work Queues
+
+Work Queues are subsets of Work Pools that allow for more granular control over how work is distributed and prioritized.
+
+Important aspects of Work Queues:
+- They help in organizing and prioritizing work within a Work Pool
+- Work Queues can be used to group related Flows or to separate different types of workloads
+- They provide a way to control concurrency and manage resource utilization
+
+## Relationship Between Components
+
+1. Flows are the core workflows you define.
+2. Deployments package Flows with specific configurations.
+3. Work Pools provide the infrastructure where Flows run.
+4. Work Queues organize and prioritize work within Work Pools.
+
+When you create a Deployment, you typically associate it with a specific Work Pool and optionally a Work Queue. This determines where and how the Flow will be executed when it's time to run.
+
+# Learning Notes
+
+## Caddy Reverse proxy - 80 not localhost
+
+1. `localhost` vs `:80`:
+   - `localhost` in a Caddyfile typically binds to both IPv4 and IPv6 loopback addresses (127.0.0.1 and ::1) on the default HTTP port (80).
+   - `:80` tells Caddy to listen on all available network interfaces (0.0.0.0) on port 80.
+
+2. Docker networking:
+   - In a Docker environment, `localhost` inside a container refers to the container itself, not the host machine or other containers.
+   - When you use `:80`, it allows the container to listen on all interfaces, including the Docker network interface.
+
+3. Container accessibility:
+   - With `localhost`, Caddy was only listening for connections coming from inside its own container.
+   - With `:80`, Caddy is now listening for connections from any source, including other containers and the host machine.
+
+4. Port mapping:
+   - Your Docker Compose file maps port 80 of the Caddy container to port 8080 on the host (`"8080:80"`).
+   - By using `:80` in the Caddyfile, you're ensuring that Caddy is listening on the correct port that's being mapped.
+
+5. Network isolation:
+   - Docker creates a separate network for your containers. Using `:80` allows Caddy to be accessible within this Docker network.
+
+In essence, changing to `:80` made Caddy listen on all interfaces on port 80 inside its container. This allows it to receive traffic from the Docker network, which is crucial for the reverse proxy to work correctly in a containerized environment.
+
+The `localhost` configuration was too restrictive for a Docker setup, essentially making Caddy unreachable from outside its own container. The `:80` configuration opens it up to be reachable from other containers and the host, which is typically what you want in a Docker-based reverse proxy setup.
 ---
 
 # Prefect Infrastructure V1 

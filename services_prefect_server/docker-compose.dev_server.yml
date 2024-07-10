@@ -49,23 +49,36 @@ services:
   caddy:
     image: caddy:2
     ports:
-      - "443:443"
       - "8080:80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - ./flows:/srv/flows
-      - caddy_data:/data
-      - caddy_config:/config
     depends_on:
-      prefect-server:
-        condition: service_healthy  # automatic docker flag
+      - prefect-server
     networks:
       - prefect-server-network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
+
+  # OLD, COMPLEX
+  # caddy:
+  #   image: caddy:2
+  #   ports:
+  #     - "443:443"
+  #     - "8080:80"
+  #   volumes:
+  #     - ./Caddyfile:/etc/caddy/Caddyfile
+  #     - ./flows:/srv/flows
+  #     - caddy_data:/data
+  #     - caddy_config:/config
+  #   depends_on:
+  #     prefect-server:
+  #       condition: service_healthy  # automatic docker flag
+  #   networks:
+  #     - prefect-server-network
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "10m"
+  #       max-file: "3"
 
 
 networks:
