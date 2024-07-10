@@ -1,7 +1,6 @@
 # from config import settings
 from fastapi import FastAPI
 
-import mlflow, 
 # from prefect import Client
 
 app = FastAPI()

@@ -30,7 +30,7 @@ def set_prefect_configs():
     config.storage.default_storage = "local"
 
     # Setting engine configurations
-    config.engine.flow_runner.default_policy = "cancel"
+    # config.engine.flow_runner.default_policy = "cancel"
 
 
 def print_prefect_configs():

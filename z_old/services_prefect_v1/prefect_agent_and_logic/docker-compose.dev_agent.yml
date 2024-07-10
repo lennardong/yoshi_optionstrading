@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  prefect_agent:
+    build: ./prefect_agent
+    container_name: prefect_agent
+    environment:
+      - PREFECT_API_URL=http://<PREFECT_SERVER_HOST>:4200/api  # Replace <PREFECT_SERVER_HOST> with the actual host
+    networks:
+      - prefect-agent-network
+
+  app:
+    build: ./app
+    container_name: app
+    environment:
+      - N=5  # Change this value to set the interval in seconds
+    networks:
+      - prefect-agent-network
+
+networks:
+  prefect-agent-network:
+    driver: bridge

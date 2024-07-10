@@ -1,0 +1,78 @@
+name: service-prefect_server_dev
+
+services:
+  prefect-server:
+    container_name: prefect_server_dev
+    build:
+      context: ./prefect
+      dockerfile: prefect_server.Dockerfile
+    ports:
+      - "4200:4200"
+    environment:
+      PREFECT_SERVER_API_HOST: 0.0.0.0 # -> prefect docker
+      PREFECT_SERVER_DATABASE_URL: postgresql+asyncpg://prefect:prefectpassword@postgres:5432/prefect # -> prefect config
+      PREFECT_API_URL: http://0.0.0.0:4200/api  # -> prefect config
+      PREFECT_FLOWS_URL: http://0.0.0.0:4200/flows # -> prefect config
+      PREFECT_LOGGING_LEVEL: DEBUG
+    depends_on:
+      postgres:
+        condition: service_healthy  # automatic docker flag
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4200/api/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - prefect-server-network
+
+
+  postgres:
+    image: postgres:13
+    container_name: prefect_server_postgres_dev
+    environment:
+      POSTGRES_DB: prefect
+      POSTGRES_USER: prefect
+      POSTGRES_PASSWORD: prefectpassword
+    ports:
+      - "127.0.0.1:5432:5432"  # only expose to host
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prefect"]  # postgre command
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - prefect-server-network
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "443:443"
+      - "8080:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./flows:/srv/flows
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      prefect-server:
+        condition: service_healthy  # automatic docker flag
+    networks:
+      - prefect-server-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+
+networks:
+  prefect-server-network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:

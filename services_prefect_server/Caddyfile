@@ -1,0 +1,48 @@
+{
+    email lenn@email.com
+    # auto_https disable
+}
+
+localhost {
+    encode gzip
+
+    handle /api/* {
+        reverse_proxy prefect-server:4200
+    }
+
+    handle /flows/* {
+        root * /srv/flows
+        file_server
+        upload {
+            to /srv/flows
+        }
+    }
+
+    handle /* {
+        reverse_proxy prefect-server:4200
+    }
+}
+
+# {
+#     email lenn@email.com
+# }
+
+# localhost {
+#     encode gzip
+
+#     handle /api/* {
+#         reverse_proxy prefect-server:4200
+#     }
+
+#     handle /flows/* {
+#         root * /srv/flows
+#         file_server
+#         upload {
+#             to /srv/flows
+#         }
+#     }
+
+#     handle /* {
+#         reverse_proxy prefect-server:4200
+#     }
+# }
