@@ -1,0 +1,7 @@
+:80 {
+    reverse_proxy mlflow-server:5000
+}
+
+:80/minio/* {
+    reverse_proxy minio:9000
+}
