@@ -6,7 +6,7 @@ services:
     container_name: mlflow_server_dev
     build:
       context: ./mlflow
-      dockerfile: mlflow.Dockerfile
+      dockerfile: mlflow_server.Dockerfile
     ports:
       - "5000:5000"
     environment:

@@ -1,12 +1,12 @@
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | #########################
-[2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | CONFIGURED ENV VARS
+[2Kprefect_server_dev  | #########################
+[2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | WAITING FOR PREFECT SERVER TO BE READY
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | HOSTNAME=074f2168f160
+[2Kprefect_server_dev  | HOSTNAME=b900963c1b60
 [2Kprefect_server_dev  | PYTHON_VERSION=3.8.19
 [2Kprefect_server_dev  | PREFECT_FLOWS_URL=http://0.0.0.0:4200/flows
 [2Kprefect_server_dev  | PWD=/app
@@ -19,20 +19,25 @@
 [2Kprefect_server_dev  | PREFECT_API_URL=http://0.0.0.0:4200/api
 [2Kprefect_server_dev  | SHLVL=2
 [2Kprefect_server_dev  | PYTHON_PIP_VERSION=23.0.1
-[2Kprefect_server_dev  | PYTHON_GET_PIP_SHA256=ee09098395e42eb1f82ef4acb231a767a6ae85504a9cf9983223df0a7cbd35d7
+[2Kprefect_server_dev  | PYTHON_GET_PIP_SHA256=0f8bb2652c0b0965f268312f49ec21e772d421d381af4324beea66b8acf2635c
 [2Kprefect_server_dev  | PREFECT_SERVER_DATABASE_URL=postgresql+asyncpg://prefect:prefectpassword@postgres:5432/prefect
-[2Kprefect_server_dev  | PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/e03e1607ad60522cf34a92e834138eb89f57667c/public/get-pip.py
+[2Kprefect_server_dev  | PYTHON_GET_PIP_URL=https://github.com/pypa/get-pip/raw/ac00c61f60b2df101b7cdf90ed319b625ac93b42/public/get-pip.py
 [2Kprefect_server_dev  | PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 [2Kprefect_server_dev  | _=/usr/bin/printenv
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | SETTING UP PREFECT CONFIGS
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 07:33:58.890 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:33:58.891 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:34:02.073 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | 01:18:16.813 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:16.813 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:17.744 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
 [2Kprefect_server_dev  | Set 'PREFECT_API_DATABASE_CONNECTION_URL' to 
 [2Kprefect_server_dev  | 'postgresql+asyncpg://prefect:prefectpassword@postgres:5432/prefect'.
+[2Kprefect_server_dev  | Updated profile 'default'.
+[2Kprefect_server_dev  | 01:18:18.965 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | Set 'PREFECT_API_URL' to 'http://0.0.0.0:4200/api'.
+[2Kprefect_server_dev  | PREFECT_API_URL is also set by an environment variable which will override your 
+[2Kprefect_server_dev  | config value. Run `unset PREFECT_API_URL` to clear it.
 [2Kprefect_server_dev  | Updated profile 'default'.
 [2Kprefect_server_dev  | An exception occurred.
 [2Kprefect_server_dev  | Traceback (most recent call last):
@@ -111,19 +116,12 @@
 [2Kprefect_server_dev  |     raise mapped_exc(message) from exc
 [2Kprefect_server_dev  | httpx.ConnectError: All connection attempts failed
 [2Kprefect_server_dev  | Waiting for Prefect server... (attempt: 1)
-[2Kprefect_server_dev  | 07:34:06.182 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | Set 'PREFECT_API_URL' to 'http://0.0.0.0:4200/api'.
-[2Kprefect_server_dev  | PREFECT_API_URL is also set by an environment variable which will override your 
-[2Kprefect_server_dev  | config value. Run `unset PREFECT_API_URL` to clear it.
-[2Kprefect_server_dev  | Updated profile 'default'.
-[2Kprefect_server_dev  | 07:34:12.732 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:20.434 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | Set 'PREFECT_LOGGING_LEVEL' to 'DEBUG'.
 [2Kprefect_server_dev  | PREFECT_LOGGING_LEVEL is also set by an environment variable which will override
 [2Kprefect_server_dev  | your config value. Run `unset PREFECT_LOGGING_LEVEL` to clear it.
 [2Kprefect_server_dev  | Updated profile 'default'.
-[2Kprefect_server_dev  | 07:34:18.830 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:34:19.171 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:34:20.238 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | 01:18:21.873 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | PREFECT_PROFILE='default'
 [2Kprefect_server_dev  | PREFECT_API_DATABASE_CONNECTION_URL='********' (from profile)
 [2Kprefect_server_dev  | PREFECT_API_URL='http://0.0.0.0:4200/api' (from env)
@@ -133,85 +131,8 @@
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | RUNNING PREFECT SERVER
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | An exception occurred.
-[2Kprefect_server_dev  | Traceback (most recent call last):
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
-[2Kprefect_server_dev  |     yield
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
-[2Kprefect_server_dev  |     resp = await self._pool.handle_async_request(req)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection_pool.py", line 216, in handle_async_request
-[2Kprefect_server_dev  |     raise exc from None
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection_pool.py", line 196, in handle_async_request
-[2Kprefect_server_dev  |     response = await connection.handle_async_request(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 99, in handle_async_request
-[2Kprefect_server_dev  |     raise exc
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 76, in handle_async_request
-[2Kprefect_server_dev  |     stream = await self._connect(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 122, in _connect
-[2Kprefect_server_dev  |     stream = await self._network_backend.connect_tcp(**kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_backends/auto.py", line 30, in connect_tcp
-[2Kprefect_server_dev  |     return await self._backend.connect_tcp(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_backends/anyio.py", line 123, in connect_tcp
-[2Kprefect_server_dev  |     stream._raw_socket.setsockopt(*option)  # type: ignore[attr-defined] # pragma: no cover
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/contextlib.py", line 131, in __exit__
-[2Kprefect_server_dev  |     self.gen.throw(type, value, traceback)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-[2Kprefect_server_dev  |     raise to_exc(exc) from exc
-[2Kprefect_server_dev  | httpcore.ConnectError: All connection attempts failed
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | The above exception was the direct cause of the following exception:
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | Traceback (most recent call last):
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/cli/_utilities.py", line 42, in wrapper
-[2Kprefect_server_dev  |     return fn(*args, **kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/utilities/asyncutils.py", line 304, in coroutine_wrapper
-[2Kprefect_server_dev  |     return call()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 432, in __call__
-[2Kprefect_server_dev  |     return self.result()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 318, in result
-[2Kprefect_server_dev  |     return self.future.result(timeout=timeout)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 179, in result
-[2Kprefect_server_dev  |     return self.__get_result()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/concurrent/futures/_base.py", line 389, in __get_result
-[2Kprefect_server_dev  |     raise self._exception
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 389, in _run_async
-[2Kprefect_server_dev  |     result = await coro
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/cli/work_pool.py", line 275, in ls
-[2Kprefect_server_dev  |     pools = await client.read_work_pools()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/orchestration.py", line 2662, in read_work_pools
-[2Kprefect_server_dev  |     response = await self._client.post("/work_pools/filter", json=body)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1892, in post
-[2Kprefect_server_dev  |     return await self.request(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1574, in request
-[2Kprefect_server_dev  |     return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 327, in send
-[2Kprefect_server_dev  |     response = await self._send_with_retry(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 243, in _send_with_retry
-[2Kprefect_server_dev  |     await self._add_csrf_headers(request=request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 376, in _add_csrf_headers
-[2Kprefect_server_dev  |     token_response = await self.send(token_request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 327, in send
-[2Kprefect_server_dev  |     response = await self._send_with_retry(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 251, in _send_with_retry
-[2Kprefect_server_dev  |     response = await send(request, *send_args, **send_kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1661, in send
-[2Kprefect_server_dev  |     response = await self._send_handling_auth(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
-[2Kprefect_server_dev  |     response = await self._send_handling_redirects(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
-[2Kprefect_server_dev  |     response = await self._send_single_request(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1763, in _send_single_request
-[2Kprefect_server_dev  |     response = await transport.handle_async_request(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
-[2Kprefect_server_dev  |     resp = await self._pool.handle_async_request(req)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/contextlib.py", line 131, in __exit__
-[2Kprefect_server_dev  |     self.gen.throw(type, value, traceback)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
-[2Kprefect_server_dev  |     raise mapped_exc(message) from exc
-[2Kprefect_server_dev  | httpx.ConnectError: All connection attempts failed
 [2Kprefect_server_dev  | Skipping virtualenv creation, as specified in config file.
-[2Kprefect_server_dev  | Waiting for Prefect server... (attempt: 2)
-[2Kprefect_server_dev  | 07:34:27.695 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:23.624 | DEBUG   | prefect.profiles - Using profile 'default'
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  |  ___ ___ ___ ___ ___ ___ _____ 
 [2Kprefect_server_dev  | | _ \ _ \ __| __| __/ __|_   _| 
@@ -228,126 +149,26 @@
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 07:34:33.225 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:34:36.790 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:34:38.514 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  | An exception occurred.
-[2Kprefect_server_dev  | Traceback (most recent call last):
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 69, in map_httpcore_exceptions
-[2Kprefect_server_dev  |     yield
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
-[2Kprefect_server_dev  |     resp = await self._pool.handle_async_request(req)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection_pool.py", line 216, in handle_async_request
-[2Kprefect_server_dev  |     raise exc from None
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection_pool.py", line 196, in handle_async_request
-[2Kprefect_server_dev  |     response = await connection.handle_async_request(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 99, in handle_async_request
-[2Kprefect_server_dev  |     raise exc
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 76, in handle_async_request
-[2Kprefect_server_dev  |     stream = await self._connect(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_async/connection.py", line 122, in _connect
-[2Kprefect_server_dev  |     stream = await self._network_backend.connect_tcp(**kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_backends/auto.py", line 30, in connect_tcp
-[2Kprefect_server_dev  |     return await self._backend.connect_tcp(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_backends/anyio.py", line 123, in connect_tcp
-[2Kprefect_server_dev  |     stream._raw_socket.setsockopt(*option)  # type: ignore[attr-defined] # pragma: no cover
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/contextlib.py", line 131, in __exit__
-[2Kprefect_server_dev  |     self.gen.throw(type, value, traceback)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
-[2Kprefect_server_dev  |     raise to_exc(exc) from exc
-[2Kprefect_server_dev  | httpcore.ConnectError: All connection attempts failed
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | The above exception was the direct cause of the following exception:
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | Traceback (most recent call last):
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/cli/_utilities.py", line 42, in wrapper
-[2Kprefect_server_dev  |     return fn(*args, **kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/utilities/asyncutils.py", line 304, in coroutine_wrapper
-[2Kprefect_server_dev  |     return call()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 432, in __call__
-[2Kprefect_server_dev  |     return self.result()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 318, in result
-[2Kprefect_server_dev  |     return self.future.result(timeout=timeout)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 179, in result
-[2Kprefect_server_dev  |     return self.__get_result()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/concurrent/futures/_base.py", line 389, in __get_result
-[2Kprefect_server_dev  |     raise self._exception
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/_internal/concurrency/calls.py", line 389, in _run_async
-[2Kprefect_server_dev  |     result = await coro
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/cli/work_pool.py", line 275, in ls
-[2Kprefect_server_dev  |     pools = await client.read_work_pools()
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/orchestration.py", line 2662, in read_work_pools
-[2Kprefect_server_dev  |     response = await self._client.post("/work_pools/filter", json=body)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1892, in post
-[2Kprefect_server_dev  |     return await self.request(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1574, in request
-[2Kprefect_server_dev  |     return await self.send(request, auth=auth, follow_redirects=follow_redirects)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 327, in send
-[2Kprefect_server_dev  |     response = await self._send_with_retry(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 243, in _send_with_retry
-[2Kprefect_server_dev  |     await self._add_csrf_headers(request=request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 376, in _add_csrf_headers
-[2Kprefect_server_dev  |     token_response = await self.send(token_request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 327, in send
-[2Kprefect_server_dev  |     response = await self._send_with_retry(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/prefect/client/base.py", line 251, in _send_with_retry
-[2Kprefect_server_dev  |     response = await send(request, *send_args, **send_kwargs)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1661, in send
-[2Kprefect_server_dev  |     response = await self._send_handling_auth(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1689, in _send_handling_auth
-[2Kprefect_server_dev  |     response = await self._send_handling_redirects(
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1726, in _send_handling_redirects
-[2Kprefect_server_dev  |     response = await self._send_single_request(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_client.py", line 1763, in _send_single_request
-[2Kprefect_server_dev  |     response = await transport.handle_async_request(request)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 373, in handle_async_request
-[2Kprefect_server_dev  |     resp = await self._pool.handle_async_request(req)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/contextlib.py", line 131, in __exit__
-[2Kprefect_server_dev  |     self.gen.throw(type, value, traceback)
-[2Kprefect_server_dev  |   File "/usr/local/lib/python3.8/site-packages/httpx/_transports/default.py", line 86, in map_httpcore_exceptions
-[2Kprefect_server_dev  |     raise mapped_exc(message) from exc
-[2Kprefect_server_dev  | httpx.ConnectError: All connection attempts failed
-[2Kprefect_server_dev  | Waiting for Prefect server... (attempt: 3)
-[2Kprefect_server_dev  | 07:34:59.505 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:35:02.500 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  |                Work Pools               
-[2Kprefect_server_dev  | ┏━━━━━━┳━━━━━━┳━━━━┳━━━━━━━━━━━━━━━━━━━┓
-[2Kprefect_server_dev  | ┃ Name ┃ Type ┃ ID ┃ Concurrency Limit ┃
-[2Kprefect_server_dev  | ┡━━━━━━╇━━━━━━╇━━━━╇━━━━━━━━━━━━━━━━━━━┩
-[2Kprefect_server_dev  | └──────┴──────┴────┴───────────────────┘
-[2Kprefect_server_dev  |        (**) denotes a paused pool       
+[2Kprefect_server_dev  | 01:18:24.931 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:30.545 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:30.858 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  |                                    Work Pools                                   
+[2Kprefect_server_dev  | ┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┓
+[2Kprefect_server_dev  | ┃ Name                  ┃ T… ┃                               ID ┃ Concurrency… ┃
+[2Kprefect_server_dev  | ┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━┩
+[2Kprefect_server_dev  | │ default (**)          │ p… │ d89f87c3-4f43-4689-8452-7633c5c… │ None         │
+[2Kprefect_server_dev  | │ workpool_localproces… │ p… │ 46516718-9777-4aca-b2a1-bced16b… │ 10           │
+[2Kprefect_server_dev  | └───────────────────────┴────┴──────────────────────────────────┴──────────────┘
+[2Kprefect_server_dev  |                            (**) denotes a paused pool                           
 [2Kprefect_server_dev  | 
 [2Kprefect_server_dev  | #########################
 [2Kprefect_server_dev  | CREATING DEFAULT WORK POOL
 [2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 07:35:12.560 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:35:15.761 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  | 07:35:15.953 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  | Created work pool 'workpool_localprocess'!
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | To start a worker for this work pool, run:
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  |         prefect worker start --pool workpool_localprocess
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | └── UUID: 378ddaf2-ecd1-48b2-9707-bff7cbfe2974
-[2Kprefect_server_dev  | └── Type: process
-[2Kprefect_server_dev  | └── Description: None
-[2Kprefect_server_dev  | └── Status: Not ready
-[2Kprefect_server_dev  | └── URL: http://0.0.0.0:4200/work-pools/work-pool/workpool_localprocess
-[2Kprefect_server_dev  | 
-[2Kprefect_server_dev  | 07:35:23.530 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:35:25.932 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  | Set concurrency limit for work pool 'workpool_localprocess' to 10
-[2Kprefect_server_dev  | 07:35:32.651 | DEBUG   | prefect.profiles - Using profile 'default'
-[2Kprefect_server_dev  | 07:35:35.033 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
-[2Kprefect_server_dev  |                                    Work Pools                                   
-[2Kprefect_server_dev  | ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┓
-[2Kprefect_server_dev  | ┃ Name              ┃ Type ┃                               ID ┃ Concurrency L… ┃
-[2Kprefect_server_dev  | ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━┩
-[2Kprefect_server_dev  | │ workpool_localpr… │ pro… │ 378ddaf2-ecd1-48b2-9707-bff7cbf… │ 10             │
-[2Kprefect_server_dev  | └───────────────────┴──────┴──────────────────────────────────┴────────────────┘
-[2Kprefect_server_dev  |                            (**) denotes a paused pool                           
+[2Kprefect_server_dev  | 01:18:32.014 | DEBUG   | prefect.profiles - Using profile 'default'
+[2Kprefect_server_dev  | 01:18:32.302 | DEBUG   | prefect.client - Connecting to API at http://0.0.0.0:4200/api/
+[2Kprefect_server_dev  | Work pool named 'workpool_localprocess' already exists. Please try creating your
+[2Kprefect_server_dev  | work pool again with a different name.
 [2Kprefect_server_dev  | Invalid HTTP request received.
 [2Kprefect_server_dev  | Invalid HTTP request received.
-[2Kprefect_server_dev  | 08:33:31.506 | ERROR   | prefect.server.services.telemetry - Failed to send telemetry: [Errno -2] Name or service not known
-[2Kprefect_server_dev  | Shutting down telemetry service...
+[2Kprefect_server_dev  | Invalid HTTP request received.
+[2Kprefect_server_dev  | Invalid HTTP request received.

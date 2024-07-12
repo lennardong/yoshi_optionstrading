@@ -5,7 +5,7 @@ export PREFECT_API_URL="http://localhost:8080/api"
 # export PREFECT_API_URL="http://localhost:4200/api"
 
 # Create a deployment for the flow
-prefect deployment build toy_flow_basic.py:simple_flow -n simple_flow_deployment -q default
+prefect deployment build toy_flow.py:simple_flow -n simple_flow_deployment -q default
 
 # Apply the deployment
 prefect deployment apply simple_flow-deployment.yaml

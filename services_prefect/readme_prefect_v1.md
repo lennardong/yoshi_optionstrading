@@ -18,7 +18,7 @@ graph TD
         D[User Browser]
     end
 
-    D -->|HTTPS:443/HTTP:80| C
+    D -->|HTTPS:443/HTTP:8080| C
     C -->|HTTP:4200| A
     A -->|PostgreSQL:5432| B
     C -->|File System| E
