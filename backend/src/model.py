@@ -1,3 +1,4 @@
+import mlflow
 import numpy as np
 import optuna
 import pandas as pd
@@ -142,10 +143,163 @@ def predict_closing_price(model, df, prediction_date, selected_features):
     return prediction[0]
 
 
+def mlflow_optimize_model(X, y, n_trials=100):
+    def objective(trial):
+        with mlflow.start_run(nested=True):
+            n_lagged_days = trial.suggest_int("n_lagged_days", 2, 5)
+            n_features = trial.suggest_int("n_features", 1, X.shape[1])
+
+            lag_cols = [f"close_lag_{i}" for i in range(1, n_lagged_days + 1)]
+            other_cols = [col for col in X.columns if not col.startswith("close_lag_")]
+            selected_cols = lag_cols + other_cols
+
+            X_selected = X[selected_cols]
+
+            rfe = RFE(estimator=LinearRegression(), n_features_to_select=n_features)
+            rfe.fit(X_selected, y)
+
+            selected_features = [
+                feature
+                for feature, selected in zip(X_selected.columns, rfe.support_)
+                if selected
+            ]
+
+            X_rfe = rfe.transform(X_selected)
+            model = LinearRegression()
+
+            tscv = TimeSeriesSplit(n_splits=5)
+            rmse_scores = []
+
+            for train_index, val_index in tscv.split(X_rfe):
+                X_train, X_val = X_rfe[train_index], X_rfe[val_index]
+                y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+
+                model.fit(X_train, y_train)
+                y_pred = model.predict(X_val)
+                rmse = np.sqrt(mean_squared_error(y_val, y_pred))
+                rmse_scores.append(rmse)
+
+            mean_rmse = np.mean(rmse_scores)
+
+            mlflow.log_params(
+                {
+                    "n_lagged_days": n_lagged_days,
+                    "n_features": n_features,
+                    "selected_features": selected_features,
+                }
+            )
+            mlflow.log_metric("mean_rmse", mean_rmse)
+
+            # Store selected_features in trial user_attrs
+            trial.set_user_attr("selected_features", selected_features)
+
+            return mean_rmse
+
+    study = optuna.create_study(direction="minimize")
+    study.optimize(objective, n_trials=n_trials)
+
+    best_params = study.best_params
+    best_params["selected_features"] = study.best_trial.user_attrs["selected_features"]
+    best_params["best_rmse"] = study.best_value
+
+    return best_params
+
+
+# def mlflow_optimize_model(X, y, n_trials=100):
+#     def objective(trial):
+#         with mlflow.start_run(nested=True):
+#             n_lagged_days = trial.suggest_int("n_lagged_days", 2, 5)
+#             n_features = trial.suggest_int("n_features", 1, X.shape[1])
+
+#             lag_cols = [f"close_lag_{i}" for i in range(1, n_lagged_days + 1)]
+#             other_cols = [col for col in X.columns if not col.startswith("close_lag_")]
+#             selected_cols = lag_cols + other_cols
+
+#             X_selected = X[selected_cols]
+
+#             rfe = RFE(estimator=LinearRegression(), n_features_to_select=n_features)
+#             rfe.fit(X_selected, y)
+
+#             selected_features = [
+#                 feature
+#                 for feature, selected in zip(X_selected.columns, rfe.support_)
+#                 if selected
+#             ]
+
+#             X_rfe = rfe.transform(X_selected)
+#             model = LinearRegression()
+
+#             tscv = TimeSeriesSplit(n_splits=5)
+#             rmse_scores = []
+
+#             for train_index, val_index in tscv.split(X_rfe):
+#                 X_train, X_val = X_rfe[train_index], X_rfe[val_index]
+#                 y_train, y_val = y.iloc[train_index], y.iloc[val_index]
+
+#                 model.fit(X_train, y_train)
+#                 y_pred = model.predict(X_val)
+#                 rmse = np.sqrt(mean_squared_error(y_val, y_pred))
+#                 rmse_scores.append(rmse)
+
+#             mean_rmse = np.mean(rmse_scores)
+
+#             mlflow.log_params(
+#                 {
+#                     "n_lagged_days": n_lagged_days,
+#                     "n_features": n_features,
+#                     "selected_features": selected_features,
+#                 }
+#             )
+#             mlflow.log_metric("mean_rmse", mean_rmse)
+
+#             return mean_rmse
+
+#     study = optuna.create_study(direction="minimize")
+#     study.optimize(objective, n_trials=n_trials)
+
+#     best_params = study.best_params
+#     best_params["selected_features"] = study.best_trial.user_attrs["selected_features"]
+#     best_params["best_rmse"] = study.best_value
+
+#     return best_params
+
+
+def mlflow_train_model(X, y, selected_features):
+    with mlflow.start_run():
+        X_selected = X[selected_features]
+        model = LinearRegression()
+        model.fit(X_selected, y)
+
+        # Log model parameters
+        mlflow.log_params(
+            {
+                "model_type": "LinearRegression",
+                "n_features": len(selected_features),
+                "selected_features": selected_features,
+            }
+        )
+
+        # Log the model
+        mlflow.sklearn.log_model(model, "model")
+
+        # Log feature importances
+        feature_importance = dict(zip(selected_features, model.coef_))
+        mlflow.log_params({"importance_" + k: v for k, v in feature_importance.items()})
+
+        # Log metrics
+        train_rmse = np.sqrt(mean_squared_error(y, model.predict(X_selected)))
+        mlflow.log_metric("train_rmse", train_rmse)
+
+        return model
+
+
 if __name__ == "__main__":
     from datetime import datetime
 
     import main as main
+    import mlflow_utils as mlflow_utils
+
+    mlflow_utils.setup_mlflow()
 
     ALPHA_VANTAGE_API_KEY = "7H8XHMRSGISFBKK7"
     STOCK_SYMBOL = "AAPL"
@@ -164,6 +318,7 @@ if __name__ == "__main__":
 
     # Optimize model
     best_params = optimize_model(X, y)
+    best_params = mlflow_optimize_model(X, y)
     print(f"Best parameters: {best_params}")
 
     # Train model with best parameters
