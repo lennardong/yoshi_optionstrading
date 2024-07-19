@@ -9,7 +9,7 @@ graph TD
             B[PostgreSQL Container]
             C[Caddy Container]
         end
-        E[Local Flows Directory]
+        E[S3-Minio Container]
         F[Postgres Data Volume]
     end
 
@@ -21,8 +21,8 @@ graph TD
     D -->|HTTPS:443/HTTP:8080| C
     C -->|HTTP:4200| A
     A -->|PostgreSQL:5432| B
-    C -->|File System| E
-    A -.->|Bind Mount| E
+    C -->|HTTPS:444/HTTP:9000| E
+    A -.->|localhost:9000| E
     B -.->|Volume Mount| F
 
     subgraph "Prefect Server Container"
@@ -57,6 +57,11 @@ graph TD
 - Assume on-premises deployment
 - Assume centralized experiment tracking for in-house experiments and SaaS
 This document walks through the modules, their design patterns, and interactions with each other.
+- Anticipate future needs for scaling, to be managed via Prefect
+    - done via moving workers to a kuberneters or higher-compute server
+    - add DB storage to domain model (currently a simple pandas table)
+
+
 
 ## Orchestration Services
 We built the orchestration services with a few key technologies:

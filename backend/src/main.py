@@ -1,9 +1,10 @@
 # from config import settings
 import logging
 
-from data import *
+from data import DataSchema, load_df
 from fastapi import FastAPI
 from model import *
+from monitor import backtest_model_performance, monitor_model
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -23,25 +24,6 @@ def read_root():
 
 
 @app.get("/data")
-def get_data(stock_symbol: str, end_date: str, N_trading_days: int, api_key: str):
-    # Fetch raw stock data
-    df_raw = fetch_stock_data(stock_symbol, end_date, N_trading_days, api_key)
-    logging.info(df_raw.head())
-
-    # Engineer features
-    df_engineered = engineer_features(df_raw, N_trading_days)
-    logging.info(df_engineered.head())
-
-    # Select only the required columns and trim to the desired date range
-    df_result = df_engineered[
-        ["open", "close", "RSI", "SMA_10", "SMA_20", "Upper_BB", "Lower_BB"]
-    ]
-    df_result = df_result.iloc[-N_trading_days:]
-    logging.info(df_result.head())
-
-    return df_result
-
-
 def run_model_optimization(df, target_col="close", n_trials=50):
     """
     Runs model optimization to find the best hyperparameters for the model.
@@ -55,8 +37,8 @@ def run_model_optimization(df, target_col="close", n_trials=50):
         dict: A dictionary containing the best hyperparameters found during the optimization.
     """
     logging.info("Starting model optimization")
-    X, y = prepare_data(df, target_col)
-    best_params = optimize_model(X, y, n_trials)
+    X, y = _prepare_data(df, target_col)
+    best_params = optimize_model_params(X, y, n_trials)
     logging.info(f"Model optimization completed. Best parameters: {best_params}")
     return best_params
 
@@ -74,7 +56,7 @@ def run_model_training(df, best_params, target_col="close"):
         A trained machine learning model.
     """
     logging.info("Starting model retraining")
-    X, y = prepare_data(df, target_col, n_lagged_days=best_params["n_lagged_days"])
+    X, y = _prepare_data(df, target_col, n_lagged_days=best_params["n_lagged_days"])
     model = train_model(X, y, best_params["selected_features"])
 
     # Quick validation
@@ -114,44 +96,141 @@ def run_prediction(model, df, prediction_date, best_params):
     actual_close = (
         df.loc[prediction_date, "close"] if prediction_date in df.index else None
     )
-    prediction_error = (
+    abs_error = (
         abs(predicted_close - actual_close) if actual_close is not None else None
     )
 
     logging.info(f"Prediction completed. Predicted close: {predicted_close:.2f}")
     if actual_close is not None:
         logging.info(
-            f"Actual close: {actual_close:.2f}, Prediction error: {prediction_error:.2f}"
+            f"Actual close: {actual_close:.2f}, Prediction error: {abs_error:.2f}"
         )
 
-    return predicted_close, actual_close, prediction_error
+    return predicted_close, actual_close, abs_error
 
+
+def run_prediction_as_df(model, df, best_params, prediction_date=datetime.now()):
+    logging.info(f"Predicting closing price for {prediction_date}")
+
+    if prediction_date not in df.index:
+        logging.error(f"Prediction date {prediction_date} not found in the data")
+        return None
+
+    X = df.loc[prediction_date, best_params["selected_features"]].to_frame().T
+    predicted_close = model.predict(X)[0]
+
+    actual_close = df.loc[prediction_date, "close"]
+    predicted_delta = predicted_close - df.loc[prediction_date, "open"]
+    actual_delta = actual_close - df.loc[prediction_date, "open"]
+
+    prediction_df = pd.DataFrame(
+        {
+            "prediction": [predicted_close],
+            "target": [actual_delta],
+            "open": [df.loc[prediction_date, "open"]],
+            "close": [actual_close],
+            "predicted_delta": [predicted_delta],
+            "actual_delta": [actual_delta],
+        },
+        index=[prediction_date],
+    )
+
+    logging.info(f"Prediction completed. Predicted delta: {predicted_delta:.2f}")
+    logging.info(f"Actual delta: {actual_delta:.2f}")
+
+    return prediction_df
+
+
+def simulate_trading(data, model, best_params, SIMULATION_DAYS):
+    """
+    Given a dataframe, runs backtested simluation N days into the past from the last date in the dataframe.
+
+    """
+    predictions = []
+    actuals = []
+    dates = []
+
+    for i in range(len(data) - SIMULATION_DAYS, len(data)):
+        current_date = data.index[i]
+        predicted_close, actual_close, prediction_error = run_prediction(
+            model, data, current_date, best_params
+        )
+
+        predictions.append(predicted_close)
+        actuals.append(actual_close)
+        dates.append(current_date)
+
+    predictions_df = pd.DataFrame(
+        {
+            "date": dates,
+            "prediction": predictions,
+            "actual": actuals,
+            "open": data.iloc[-SIMULATION_DAYS:]["open"].values,
+            "close": data.iloc[-SIMULATION_DAYS:]["close"].values,
+        }
+    )
+    predictions_df.set_index("date", inplace=True)
+
+    predictions_df["actual_delta"] = predictions_df["close"] - predictions_df["open"]
+    predictions_df["predicted_delta"] = (
+        predictions_df["prediction"] - predictions_df["open"]
+    )
+
+    return predictions_df
+
+
+###################
 
 if __name__ == "__main__":
 
     ALPHA_VANTAGE_API_KEY = "7H8XHMRSGISFBKK7"
     STOCK_SYMBOL = "AAPL"
     N_TRADING_DAYS = 30
+    SIMULATION_DAYS = 10
+    COLS = DataSchema()
 
-    df = get_data(STOCK_SYMBOL, datetime.now(), N_TRADING_DAYS, ALPHA_VANTAGE_API_KEY)
+    df = load_df(STOCK_SYMBOL, datetime.now(), N_TRADING_DAYS, ALPHA_VANTAGE_API_KEY)
     print(df)
-    df_lagged = create_lagged_features(df, "close")
 
     # Optimize model
-    best_params = run_model_optimization(df_lagged)
+    best_params = run_model_optimization(df)
 
     # Train model on fresh data
-    model = run_model_training(df_lagged, best_params)
+    model_obj = run_model_training(df, best_params)
 
-    # Predict for the most recent date
-    last_date = df_lagged.index[-1]
-    predicted_close, actual_close, prediction_error = run_prediction(
-        model, df_lagged, last_date, best_params
-    )
+    predictions_df = simulate_trading(df, model_obj, best_params, SIMULATION_DAYS)
 
-    if predicted_close is not None:
-        print(f"Prediction for {last_date.date()}:")
-        print(f"Predicted closing price: {predicted_close:.2f}")
-        if actual_close is not None:
-            print(f"Actual closing price: {actual_close:.2f}")
-            print(f"Prediction error: {prediction_error:.2f}")
+    # Run backtesting
+    backtest_results = backtest_model_performance(predictions_df, window_size=10)
+
+    print(f"Backtesting completed for {len(backtest_results)} periods")
+    for i, result in enumerate(backtest_results):
+        print(
+            f"Period {i+1}: MSE = {result['summary']['mse']:.4f}, "
+            f"MAE = {result['summary']['mae']:.4f}, "
+            f"Accuracy = {result['summary']['accuracy']:.4f}"
+        )
+
+    # # Predict for the most recent date
+    # last_date = df_lagged.index[-1]
+    # predicted_close, actual_close, prediction_error = run_prediction(
+    #     model, df_lagged, last_date, best_params
+    # )
+
+    # if predicted_close is not None:
+    #     print(f"Prediction for {last_date.date()}:")
+    #     print(f"Predicted closing price: {predicted_close:.2f}")
+    #     if actual_close is not None:
+    #         print(f"Actual closing price: {actual_close:.2f}")
+    #         print(f"Prediction error: {prediction_error:.2f}")
+
+    # # After simulating trading, perform backtesting
+    # backtest_results = backtest_model_performance(predictions_df, window_size=10)
+
+    # print(f"Backtesting completed for {len(backtest_results)} periods")
+    # for i, result in enumerate(backtest_results):
+    #     print(
+    #         f"Period {i+1}: MSE = {result['summary']['mse']:.4f}, "
+    #         f"MAE = {result['summary']['mae']:.4f}, "
+    #         f"Accuracy = {result['summary']['accuracy']:.4f}"
+    #     )

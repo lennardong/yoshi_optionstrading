@@ -25,7 +25,6 @@ services:
     networks:
       - prefect-server-network
 
-
   postgres:
     image: postgres:13
     container_name: prefect_server_postgres_dev
@@ -58,6 +57,44 @@ services:
     networks:
       - prefect-server-network
 
+  minio:
+    build:
+      context: ./minio
+      dockerfile: minio_prefect.Dockerfile
+    container_name: prefect_minio_dev
+    ports:
+      - "9010:9000"
+      - "9011:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    networks:
+      - prefect-server-network
+  
+  # Create a bucket named "bucket" if it doesn't exist
+  minio-create-bucket:
+    image: minio/mc
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      bash -c "
+      mc alias set minio http://127.0.0.1:9010 minioadmin minioadmin &&
+      if ! mc ls minio | grep --quiet prefect-flows; then
+        mc mb minio/prefect-flows
+      else
+        echo '`prefect-flows` bucket already exists'
+      fi
+      "
+
 networks:
   prefect-server-network:
     driver: bridge
@@ -66,3 +103,4 @@ volumes:
   caddy_data:
   caddy_config:
   postgres_data:
+  minio_data:

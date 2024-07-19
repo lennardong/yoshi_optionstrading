@@ -11,6 +11,8 @@ prefect = "^2.19.7"
 asyncpg = "^0.29.0"
 sqlalchemy = "^2.0.31"
 psycopg2-binary = "^2.9.9"
+prefect-aws = "^0.4.18"
+s3fs = "^2024.6.1"
 
 
 [build-system]

@@ -1,0 +1,15 @@
+push:
+- prefect_aws.deployments.steps.push_to_s3:
+    id: push_code
+    requires: prefect-aws>=0.3.4
+    bucket: prefect-flows 
+    folder: mlops-project
+    credentials: "{{ prefect.blocks.aws-credentials.minio-credentials }}"
+
+pull:
+- prefect_aws.deployments.steps.pull_from_s3:
+    id: pull_code
+    requires: prefect-aws>=0.3.4
+    bucket: '{{ push_code.bucket }}'
+    folder: '{{ push_code.folder }}'
+    credentials: "{{ prefect.blocks.aws-credentials.minio-credentials }}"

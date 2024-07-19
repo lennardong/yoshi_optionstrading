@@ -3,10 +3,8 @@
 }
 
 :80 {
-    # reverse_proxy prefect-server:4200
-    handle /flows/* {
-        root * /srv/flows
-        file_server
+    handle /api/* {
+        reverse_proxy prefect-server:4200
     }
     
     handle /* {

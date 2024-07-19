@@ -38,3 +38,5 @@ minio-logs:
 
 minio-shell:
 	docker compose -f $(DOCKER_COMPOSE_FILE) exec minio /bin/sh
+mlflow-logstream:
+	docker compose -f $(DOCKER_COMPOSE_FILE) logs -f $(MLFLOW_SERVICE)
