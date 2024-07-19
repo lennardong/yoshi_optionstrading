@@ -2,7 +2,7 @@ import os
 from time import sleep
 
 import httpx
-from prefect import flow, task, get
+from prefect import flow, get, task
 
 # Set the Prefect API URL to your remote server
 os.environ["PREFECT_API_URL"] = "http://localhost:8080/api"

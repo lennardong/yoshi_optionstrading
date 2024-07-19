@@ -58,6 +58,9 @@ class PrefectConfig:
         logging.info("\n#### Setting up Prefect infrastructure...")
         # asyncio.run(self.setup_prefect())
         asyncio.run(self.setup_config())
+        test = asyncio.run(self.test_connection())
+        if test == False:
+            raise Exception("Prefect connection failed")
         asyncio.run(self.setup_storage())
         asyncio.run(self.setup_workpool())
         self.start_worker()
@@ -108,6 +111,18 @@ class PrefectConfig:
                 await client.create_work_pool(workpool)
                 logging.info(f"Work pool '{self.workpool_name}' created.")
 
+    async def test_connection(self):
+        async with get_client() as client:
+            try:
+                # This will ping the server and return basic information
+                health_info = await client.api_healthcheck()
+                print("Connection successful!")
+                print("Server health info:", health_info)
+                return True
+            except Exception as e:
+                print("Connection failed:", str(e))
+                return False
+
 
 async def get_flows(client: PrefectClient):
     flows = await client.read_flows()
@@ -149,15 +164,6 @@ async def deploy_flow_v1(prefect_config: PrefectConfig, flow, params=None):
         print(f"Storage: {prefect_config.storage_block}")
 
         return deployment
-
-
-# async def publish_flow_to_storage(prefect_config: PrefectConfig, flow_func):
-#     flow_content = inspect.getsource(flow_func)
-#     imports = "from prefect import flow\n\n"
-#     full_content = imports + dedent(flow_content)
-#     flow_path = f"{flow_func.__name__}.py"
-#     await prefect_config.storage_block.write_path(flow_path, full_content.encode())
-#     print(f"Flow '{flow_func.__name__}' published to storage at path: {flow_path}")
 
 
 async def publish_flow_to_storage(prefect_config: PrefectConfig, flow_func):
@@ -210,43 +216,6 @@ async def deploy_flow(
             return deployment_id, flow_run.id
 
     return deployment_id, None
-
-
-# NOTE this is not needed - to run a flow, just run the function
-# async def run_flow(flow, prefect_config: PrefectConfig, params=None):
-#     async with get_client() as client:
-#         client: PrefectClient = client
-#         try:
-#             existing_flow = await client.read_flow_by_name(flow.name)
-#             flow_id = existing_flow.id
-#         except Exception:
-#             flow_id = await client.create_flow(flow)
-
-#         flow_run = await client.create_flow_run(flow=flow, parameters=params)
-
-#         # Retrieve detailed information about the flow run
-#         flow_run_details = await client.read_flow_run(flow_run.id)
-
-#         print(f"Flow run created with ID: {flow_run.id}")
-#         print(f"Infrastructure PID: {flow_run_details.infrastructure_pid}")
-#         print(f"Work Pool Name: {flow_run_details.work_pool_name}")
-#         print(f"Work Queue Name: {flow_run_details.work_queue_name}")
-#         print(f"State: {flow_run_details.state}")
-
-#     return flow_run
-
-
-async def test_connection():
-    async with get_client() as client:
-        try:
-            # This will ping the server and return basic information
-            health_info = await client.api_healthcheck()
-            print("Connection successful!")
-            print("Server health info:", health_info)
-            return True
-        except Exception as e:
-            print("Connection failed:", str(e))
-            return False
 
 
 @flow(log_prints=True)

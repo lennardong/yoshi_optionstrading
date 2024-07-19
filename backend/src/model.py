@@ -3,6 +3,7 @@ import logging
 import os
 from dataclasses import asdict, dataclass, fields
 from datetime import datetime, timedelta
+from enum import Enum
 from typing import Optional, Union
 
 # Mlflow
@@ -55,6 +56,12 @@ class OptionsModel:
         if "time_trained" in data and data["time_trained"]:
             data["time_trained"] = datetime.fromisoformat(data["time_trained"])
         return OptionsModel(**data)
+
+
+class ModelStage(Enum):
+    STAGING = "staging"
+    PROD = "prod"
+    ARCHIVED = "archived"
 
 
 ####################
@@ -147,43 +154,42 @@ def monitor_model(
 
 def mlflow_promote_model(model_name: str):
     client = MlflowClient()
-    # Get all versions of the model
     versions = client.search_model_versions(f"name='{model_name}'")
 
     # Find the latest version tagged as 'staging'
-    staging_versions = [v for v in versions if v.tags.get("status") == "staging"]
+    staging_versions = [
+        v for v in versions if v.tags.get("status") == ModelStage.STAGING.value
+    ]
     if not staging_versions:
         raise ValueError(
             f"No model version found with status 'staging' for model '{model_name}'"
         )
     latest_staging_version = max(staging_versions, key=lambda v: int(v.version))
 
-    # Find the latest version tagged as 'prod'
-    prod_versions = [v for v in versions if v.tags.get("status") == "prod"]
-    latest_prod_version = (
-        max(prod_versions, key=lambda v: int(v.version)) if prod_versions else None
-    )
+    # Find all versions tagged as 'prod'
+    prod_versions = [
+        v for v in versions if v.tags.get("status") == ModelStage.PROD.value
+    ]
+
+    # Archive all existing prod models
+    for prod_version in prod_versions:
+        client.set_model_version_tag(
+            name=model_name,
+            version=prod_version.version,
+            key="status",
+            value=ModelStage.ARCHIVED.value,
+        )
+        print(f"Model version {prod_version.version} archived.")
 
     # Promote the latest staging model to prod
     client.set_model_version_tag(
         name=model_name,
         version=latest_staging_version.version,
         key="status",
-        value="prod",
+        value=ModelStage.PROD.value,
     )
 
-    # Archive the existing prod model
-    if latest_prod_version:
-        client.set_model_version_tag(
-            name=model_name,
-            version=latest_prod_version.version,
-            key="status",
-            value="archived",
-        )
-
     print(f"Model version {latest_staging_version.version} promoted to 'prod'.")
-    if latest_prod_version:
-        print(f"Model version {latest_prod_version.version} archived.")
 
 
 def mlflow_get_model(model_name: str):
@@ -201,7 +207,10 @@ def mlflow_get_model(model_name: str):
     return latest_prod_version
 
 
-def mlflow_register_model(options_model: OptionsModel, model_name: str, tag: str):
+def mlflow_register_model(
+    options_model: OptionsModel,
+    model_name: str,
+):
     with mlflow.start_run() as run:
         # Log the model
         mlflow.sklearn.log_model(options_model.model, "model")
@@ -213,7 +222,10 @@ def mlflow_register_model(options_model: OptionsModel, model_name: str, tag: str
         # Set the tag for the model version
         client = mlflow.tracking.MlflowClient()
         client.set_model_version_tag(
-            name=model_name, version=result.version, key="status", value=tag
+            name=model_name,
+            version=result.version,
+            key="status",
+            value=ModelStage.STAGING.value,
         )
 
         # Serialize the dataclass to JSON and set it as a tag
@@ -513,6 +525,44 @@ def mlflow_train_model(
             return _train_and_log_model(X, y, selected_features)
 
 
+def mlflow_get_prod_model(name: str) -> OptionsModel:
+    """
+    Find the highest version with tag prod, retreive it, unserialize the metadata and return an OptionsModel
+    """
+    client = MlflowClient()
+
+    # Get all versions of the model
+    versions = client.search_model_versions(f"name='{name}'")
+
+    # Filter versions with the tag 'status' set to 'prod'
+    prod_versions = [
+        v for v in versions if v.tags.get("status") == ModelStage.PROD.value
+    ]
+
+    if not prod_versions:
+        raise ValueError(
+            f"No model version found with status 'prod' for model '{name}'"
+        )
+
+    # Get the latest prod version
+    latest_prod_version = max(prod_versions, key=lambda v: int(v.version))
+
+    # Retrieve the model metadata
+    model_metadata = client.get_model_version(name, latest_prod_version.version)
+
+    # Unserialize the metadata
+    options_model_json = model_metadata.tags.get("params")
+    if not options_model_json:
+        raise ValueError(
+            f"No params found for model '{name}' version {latest_prod_version.version}"
+        )
+
+    # Convert JSON to OptionsModel
+    options_model = OptionsModel.from_json(options_model_json)
+
+    return options_model
+
+
 # Utility Functions
 
 
@@ -591,7 +641,7 @@ if __name__ == "__main__":
     print(y.head())
 
     print("\n#### OPTIMIZE PARAMS DATA")
-    model_obj = mlflow_optimize_model(df, datetime.now(), n_trials=10)
+    model_obj: OptionsModel = mlflow_optimize_model(df, datetime.now(), n_trials=10)
     print(f"Optinmized Model: {model_obj}")
 
     print("\n#### PRED CLOSE")
@@ -604,19 +654,26 @@ if __name__ == "__main__":
 
     # Usage example:
     print("\n#### MONITOR")
-    df_monitor = monitor_model(
-        df,
-        evaluation_date=datetime.now() - timedelta(days=1),
-        evaluation_period=5,
-    )
-    # for index, row in df.iterrows():
-    #     df_monitor = monitor_model(
-    #         df,
-    #         evaluation_date=index,
-    #         evaluation_period=5,
-    #     )
+    # df_monitor = monitor_model(
+    #     df,
+    #     evaluation_date=datetime.now() - timedelta(days=1),
+    #     evaluation_period=5,
+    # )
+    for index, row in df.iterrows():
+        df_monitor = monitor_model(
+            df,
+            evaluation_date=index,
+            evaluation_period=5,
+        )
     print(df_monitor[DataSchema.get_monitor_vars()])
 
     # Register the model
-    # version = mlflow_register_model(model_obj, "options_model", "stage")
-    # print(f"Registered model version: {version}")
+    print("\n#### REGISTER AND PROMOTE MODEL")
+    MODELNAME = "options_model"
+    version = mlflow_register_model(model_obj, MODELNAME)
+    print(f"Registered model version: {version}")
+    mlflow_promote_model(MODELNAME)
+
+    print("\n#### GET PROD MODEL")
+    model = mlflow_get_prod_model(MODELNAME)
+    print(f"Prod model: {model}")

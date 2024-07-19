@@ -62,10 +62,13 @@ The architecture leverages cloud-native technologies but is primarily configured
 This architecture balances security, scalability, and flexibility. While optimized for on-premises use, its cloud-agnostic design allows for potential cloud migration or hybrid setups in the future, adapting to evolving business needs while maintaining control over sensitive operations.
 
 ## Experiment Tracking & Model Registry
+
+![ExperimentTracking](assets/20240719-171036_mlflow.png)
+> Experiment Tracking screenshot when running
+
 Our MLOps cycle leverages MLFlow for experiment tracking and model registry, integrated with Optuna for hyperparameter optimization. This setup ensures robust model management, reproducibility, and continuous improvement.
 
 ### Key Components
-
 1. Experiment Tracking
     - Custom MLFlow wrapper functions (see `backend/src/model.py`)
     - Optuna-driven hyperparameter tuning for:
@@ -96,7 +99,10 @@ Our MLOps cycle leverages MLFlow for experiment tracking and model registry, int
         - 3-day moving average of RMSE increases by 20%, or
         - Directional accuracy drops below 55%
 
-To summarize, MLFlow is leverged for the following functions in the MLOps Cycle:
+![ModelRegistry](assets/20240719-171053_mlflow_modelreg.png)
+> Model Registry screenshot when running
+
+To summarize, MLFlow is used for the following in the MLOps Cycle:
 - Parameter Logging: Records all hyperparameters for each experiment
 - Metric Tracking: Logs key performance metrics for easy comparison
 - Artifact Storage: Stores feature importance plots, model checkpoints, and validation results
@@ -109,11 +115,14 @@ This MLOps cycle, powered by MLFlow and Optuna, helps to ensure consistent model
 
 ## Workflow Orchaestration
 
+![WorkflowOrchaestration](assets/20240719-170953_prefect.png)
+> Screenshot of Prefect in running
+
 Our 0-DTE trading system leverages Prefect for workflow orchestration.
 
 The workflow deployment utilizes client-side process workers, as implemented in the PrefectConfig class (`backend/src/orchaestrate.py`). This approach allows for flexible, on-premises execution of workflows, aligning with our security requirements. The PrefectConfig class sets up the necessary Prefect infrastructure, including a MinIO storage block for flow storage and a dedicated work pool for task execution.
 
-### Key features of Prefect implementation
+### Key Details of Prefect implementation
 
 - Flow Deployment: Workflows are defined as Prefect flows and deployed programmatically. The deploy_flow function (e.g. in test_prefect_client.py) handles flow publication to storage, deployment creation, and optional immediate execution.
 - Storage Management: Flows are stored in MinIO, providing a secure, S3-compatible storage solution that keeps our sensitive trading algorithms on-premises. 
@@ -132,17 +141,104 @@ Covered above.
 
 ## Reproducibility
 
-There are several steps to this. 
 
-Assumptions
+### Assumptions
+Before we start, lets go through some assumptions. If needed, you might need to do some setup according to the below assumptions before proceeding. 
+
 - System - You are executing on a linux-environment. (I did not test or account for Windows)
 - Docker - You are familiar with docker compose, basics of HTTP and reverse proxy
 - UI - You have some experience with object storage and Prefect as there are parts of the config which is done in UI.
-- Dev Environment - You are familiar with Poetry and PyEnv. The system is built on Python 3.8 because of work considerations (we use python 3.8 inhouse.)
+- Dev Environment - You are familiar with Poetry and PyEnv. Both are installed and your project folder is configured to run on python 3.8. (The system is built on Python 3.8 because thats what we use inhouse.)
 
-Key Points
+### TLDR on Details
 - Makefiles - yes, this is implemented extensively
 - Tests - partially implemented. Written as vanilla functions, yet to be rewritten for pytest
 - CICD - none implmented via GH ACtions or equivalent 
 - Terraform - not implemented, but simplified through the use of docker-compose, makefiles and entrypoint shell scripts 
+
+
+### Launch Steps
+
+#### 1. Set Up Prefect Service
+1. Go to `services_prefect`
+2. Run `make build`, then `make up`
+3. Check that prefect is running:
+    - run `make prefect-logs` and check the file `logs_prefect.txt`
+    - go to `127.0.0.1:8080`. You should see a UI (this is defined in the Caddyfile)
+4. Configure minio:
+    - go to `127.0.0.1:9000`
+    - login with `minioadmin` and `minioadmin`
+    - create a bucket called `prefect-flows`
+
+#### 2. Set Up MLFlow Service
+1. Go to `services_mlflow`
+2. Run `make build`, then `make up`
+4. Configure minio:
+    - go to `127.0.0.1:9010` (this is defined in the Caddyfile)
+    - login with `minioadmin` and `minioadmin`
+    - create a bucket called `mlflow`
+3. Check that prefect is running:
+    - run `make mlflow-logs` and check the file `logs_mlflow.txt`
+    - go to `127.0.0.1:8081`. You should see a UI
+
+#### 3. Test MLFlow (*)
+1. Go to `backend/src/data.py`. Run it and check the outputs in console. There should be no errors. 
+2. Go to `backend/src/model.py`. Run it and check the outputs in console. There should be no errors.
+
+#### 4. Test Prefect (*)
+1. Go to `backend/src/orchaestrate.py`. Run it and check the outputs in console. There should be no errors.
+
+#### 5. Launch App (*)
+1. Start the model lifecycle. Go to `backend/src/main.py` and run the file. It should setup 3 processes that will train, monitor and run reoptimization
+2. Assuming all is running, you can now start the fastAPI server in `backend/src/api.py`. 
+3. Go to `backend/src`. Run the FastAPI application using Uvicorn: 
+    - In terminal, enter `uvicorn main:app --host 0.0.0.0 --port 8000 --reload` or just run the file `api.py` 
+    - For production, you should run it without the --reload flag and consider using a process manager like Supervisor or systemd to keep the script running and restart it if it crashes.
+4. Go to `127.0.0.1:8000/predict`. You should see a JSON return for the last prediction made. 
+
+_(*) You should be in an environment configured to use the `poetry` settings in project root  (I use a poetry venv. Alternatives are a docker container, devcontainer, etc.)_
+
+
+
+## Further Work
+This system can be deployed to a cloud VM environment like DigitalOcean for production use, leveraging a microservices architecture for scalability and modularity.
+
+To route the FastAPI application to a DNS:
+
+- Obtain a domain name from a domain registrar.
+- Configure DNS records to point to your VM's IP address.
+- Set up a reverse proxy (Caddy, similar to services) to forward requests to your FastAPI application.
+
+For deploying services (MLflow, Prefect, and the backend) on separate VMs for scalability, consider the following:
+
+### Secure Communication
+
+HTTPS Configuration
+- Use Caddy for automatic HTTPS configuration and certificate management across all services.
+- Ensure proper firewall rules to allow HTTPS traffic (port 443) for each service.
+
+SSH (Secure Shell)
+- Use OpenSSH for secure remote access to each VM.
+- Implement key-based authentication, disabling password-based logins.
+- Configure SSH to use strong ciphers (e.g., AES-256-GCM) and key exchange algorithms (e.g., curve25519-sha256).
+
+TLS/SSL Encryption
+- Utilize TLS 1.3 for all service-to-service communication.
+- Implement mutual TLS (mTLS) authentication between services using X.509 certificates.
+- Use strong cipher suites (e.g., TLS_AES_256_GCM_SHA384) for data encryption in transit.
+
+API Security
+- Implement JWT (JSON Web Tokens) for authentication between services.
+- Use the PyJWT library for token generation and validation in Python.
+- Rotate JWT signing keys regularly to enhance security.
+
+Data Encryption
+- Use the cryptography library in Python for any additional data encryption needs.
+- Implement AES-256 in GCM mode for encrypting sensitive data at rest.
+
+Secure Configuration
+- Use environment variables or secure secret management tools like HashiCorp Vault for storing and accessing sensitive configuration data.
+
+
+This microservices approach allows for independent scaling of MLflow (for experiment tracking and model registry), Prefect (for workflow orchestration), and the backend services. It enhances the system's resilience and allows for more efficient resource allocation based on the specific needs of each component in the 0-DTE trading system.
 
