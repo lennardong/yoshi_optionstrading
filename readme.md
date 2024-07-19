@@ -26,7 +26,7 @@ Based on this prediction, the trader decides to buy 10 "call options" for AAPL. 
 
 This example illustrates the high-risk, high-reward nature of same-day options trading. The trader's decision to buy options is based on their prediction model, which is a useful tool to make informed decisions.
 
-> For more details on the modelling strategies and implementation, see `backend > readme_backend.md`
+> For more details on the modelling strategies and implementation, see `backend > readme_backend.md` [link](https://github.com/lennardong/mlops_project/blob/main/backend/readme_backend.md)
 
 ## Cloud Architecture
 
@@ -60,6 +60,8 @@ The architecture leverages cloud-native technologies but is primarily configured
 - Cloud deployment is possible with additional security measures, including encryption, https via caddy, secrets management, network isolation, and cloud-specific security best practices.
 
 This architecture balances security, scalability, and flexibility. While optimized for on-premises use, its cloud-agnostic design allows for potential cloud migration or hybrid setups in the future, adapting to evolving business needs while maintaining control over sensitive operations.
+
+> For indepth details on the architecture, see `services_prefect/readme_prefect.md`[link](https://github.com/lennardong/mlops_project/blob/main/services_prefect/readme_prefect_v1.md)
 
 ## Experiment Tracking & Model Registry
 
