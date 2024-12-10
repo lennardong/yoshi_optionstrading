@@ -168,7 +168,7 @@ Before we start, lets go through some assumptions. If needed, you might need to 
     - run `make prefect-logs` and check the file `logs_prefect.txt`
     - go to `127.0.0.1:8080`. You should see a UI (this is defined in the Caddyfile)
 4. Configure minio:
-    - go to `127.0.0.1:9000`
+    - go to `127.0.0.1:9011`
     - login with `minioadmin` and `minioadmin`
     - create a bucket called `prefect-flows`
 

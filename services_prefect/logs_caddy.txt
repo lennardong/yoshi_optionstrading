@@ -1,27 +1,11 @@
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0280507,"msg":"using config from file","file":"/etc/caddy/Caddyfile"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0285711,"msg":"adapted config to JSON","adapter":"caddyfile"}
-[2Kcaddy-1  | {"level":"warn","ts":1720600834.0285776,"msg":"Caddyfile input is not formatted; run 'caddy fmt --overwrite' to fix inconsistencies","adapter":"caddyfile","file":"/etc/caddy/Caddyfile","line":2}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0289104,"logger":"admin","msg":"admin endpoint started","address":"localhost:2019","enforce_origin":false,"origins":["//[::1]:2019","//127.0.0.1:2019","//localhost:2019"]}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0289855,"logger":"http.auto_https","msg":"server is listening only on the HTTPS port but has no TLS connection policies; adding one to enable TLS","server_name":"srv0","https_port":443}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0289917,"logger":"http.auto_https","msg":"enabling automatic HTTP->HTTPS redirects","server_name":"srv0"}
-[2Kcaddy-1  | {"level":"warn","ts":1720600834.029232,"logger":"pki.ca.local","msg":"installing root certificate (you might be prompted for password)","path":"storage:pki/authorities/local/root.crt"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0293233,"msg":"warning: \"certutil\" is not available, install \"certutil\" with \"apt install libnss3-tools\" or \"yum install nss-tools\" and try again"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0293276,"msg":"define JAVA_HOME environment variable to use the Java trust"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0294483,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc000801100"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0346012,"logger":"tls","msg":"storage cleaning happened too recently; skipping for now","storage":"FileStorage:/data/caddy","instance":"964f169e-50d1-4e8e-af62-ce2641a3b737","try_again":1720687234.0346003,"try_again_in":86399.999999727}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0346313,"logger":"tls","msg":"finished cleaning storage units"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0489929,"msg":"certificate installed properly in linux trusts"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0491369,"logger":"http","msg":"enabling HTTP/3 listener","addr":":443"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.049185,"msg":"failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 7168 kiB, got: 416 kiB). See https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes for details."}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0492692,"logger":"http.log","msg":"server running","name":"srv0","protocols":["h1","h2","h3"]}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.049295,"logger":"http.log","msg":"server running","name":"remaining_auto_https_redirects","protocols":["h1","h2","h3"]}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0493002,"logger":"http","msg":"enabling automatic TLS certificate management","domains":["localhost"]}
-[2Kcaddy-1  | {"level":"warn","ts":1720600834.0494933,"logger":"tls","msg":"stapling OCSP","error":"no OCSP stapling for [localhost]: no OCSP server specified in certificate","identifiers":["localhost"]}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.0496023,"msg":"autosaved config (load with --resume flag)","file":"/config/caddy/autosave.json"}
-[2Kcaddy-1  | {"level":"info","ts":1720600834.049611,"msg":"serving initial configuration"}
-[2Kcaddy-1  | {"level":"info","ts":1720607015.333188,"msg":"shutting down apps, then terminating","signal":"SIGTERM"}
-[2Kcaddy-1  | {"level":"warn","ts":1720607015.3332503,"msg":"exiting; byeee!! 👋","signal":"SIGTERM"}
-[2Kcaddy-1  | {"level":"info","ts":1720607015.333325,"logger":"http","msg":"servers shutting down with eternal grace period"}
-[2Kcaddy-1  | {"level":"info","ts":1720607015.3378224,"logger":"admin","msg":"stopped previous server","address":"localhost:2019"}
-[2Kcaddy-1  | {"level":"info","ts":1720607015.3378763,"msg":"shutdown complete","signal":"SIGTERM","exit_code":0}
-caddy-1 exited with code 0
+caddy-1  | {"level":"info","ts":1733798812.7584124,"msg":"using config from file","file":"/etc/caddy/Caddyfile"}
+caddy-1  | {"level":"info","ts":1733798812.7589617,"msg":"adapted config to JSON","adapter":"caddyfile"}
+caddy-1  | {"level":"warn","ts":1733798812.7589715,"msg":"Caddyfile input is not formatted; run 'caddy fmt --overwrite' to fix inconsistencies","adapter":"caddyfile","file":"/etc/caddy/Caddyfile","line":2}
+caddy-1  | {"level":"info","ts":1733798812.759307,"logger":"admin","msg":"admin endpoint started","address":"localhost:2019","enforce_origin":false,"origins":["//[::1]:2019","//127.0.0.1:2019","//localhost:2019"]}
+caddy-1  | {"level":"info","ts":1733798812.7593725,"logger":"http.auto_https","msg":"automatic HTTPS is completely disabled for server","server_name":"srv0"}
+caddy-1  | {"level":"info","ts":1733798812.7595215,"logger":"http.log","msg":"server running","name":"srv0","protocols":["h1","h2","h3"]}
+caddy-1  | {"level":"info","ts":1733798812.7597325,"msg":"autosaved config (load with --resume flag)","file":"/config/caddy/autosave.json"}
+caddy-1  | {"level":"info","ts":1733798812.7597392,"msg":"serving initial configuration"}
+caddy-1  | {"level":"info","ts":1733798812.759778,"logger":"tls.cache.maintenance","msg":"started background certificate maintenance","cache":"0xc000204280"}
+caddy-1  | {"level":"info","ts":1733798812.766709,"logger":"tls","msg":"cleaning storage unit","storage":"FileStorage:/data/caddy"}
+caddy-1  | {"level":"info","ts":1733798812.7668698,"logger":"tls","msg":"finished cleaning storage units"}
